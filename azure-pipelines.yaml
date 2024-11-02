@@ -1,7 +1,7 @@
 pool: default
 
 trigger:
-  - master
+  - develop
 
 steps:
   - task: DotNetCoreCLI@2
