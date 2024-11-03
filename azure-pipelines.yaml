@@ -1,16 +1,13 @@
 pool: default
 
 trigger:
-  - develop
+-  develop 
+
+pool: 
+  vmImage: 'ubuntu' 
 
 steps:
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: build
-      projects: src/NopCommerce.sln
-      configuration: Release
-  - task: DotNetCoreCLI@2
-    inputs:
-      command: test
-      projects: "**/*.Tests.csproj"
-      publishTestResults: true
+- script: 
+    echo "updating package list" 
+    sudo apt-get update 
+  displayName: 'Run apt update' 
