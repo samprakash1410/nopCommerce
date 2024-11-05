@@ -1,5 +1,5 @@
 trigger:
-  - develop
+  - develo
 
 jobs:
   - job: dotnetbuild
