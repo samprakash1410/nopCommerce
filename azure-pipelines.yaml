@@ -1,33 +1,38 @@
 trigger:
-  - develo
+  - master
+
+parameters:
+  - name: containerRegistry
+    displayName: Service Connection For Docker Image
+    default: 'mydockerhub'
 
 jobs:
-  - job: dotnetbuild
-    displayName: Build dotnet code
-    pool: default
-    steps:
-      - bash: "echo staging directory $(Build.ArtifactStagingDirectory) and number $(Build.BuildNumber)"
-      - bash: env
-      - task: DotNetCoreCLI@2
-        displayName: build the code
-        inputs:
-          command: build
-          projects: src/NopCommerce.sln
-          configuration: Release
-      - task: DotNetCoreCLI@2
-        displayName: publish the nopcommerce
-        inputs:
-          command: publish
-          projects: src/Presentation/Nop.Web/Nop.Web.csproj
-          zipAfterPublish: true
-          configuration: Release
-          arguments: "-o $(Build.ArtifactStagingDirectory)/Published"
-      - task: PublishBuildArtifacts@1
-        displayName: Make artifacts available
-        inputs:
-          PathtoPublish: $(Build.ArtifactStagingDirectory)/Published/Nop.Web.zip
-          ArtifactName: 'nop'
-          publishLocation: Container
+  # - job: dotnetbuild
+  #   displayName: Build dotnet code
+  #   pool: default
+  #   steps:
+  #     - bash: "echo staging directory $(Build.ArtifactStagingDirectory) and number $(Build.BuildNumber)"
+  #     - bash: env
+  #     - task: DotNetCoreCLI@2
+  #       displayName: build the code
+  #       inputs:
+  #         command: build
+  #         projects: src/NopCommerce.sln
+  #         configuration: Release
+  #     - task: DotNetCoreCLI@2
+  #       displayName: publish the nopcommerce
+  #       inputs:
+  #         command: publish
+  #         projects: src/Presentation/Nop.Web/Nop.Web.csproj
+  #         zipAfterPublish: true
+  #         configuration: Release
+  #         arguments: "-o $(Build.ArtifactStagingDirectory)/Published"
+  #     - task: PublishBuildArtifacts@1
+  #       displayName: Make artifacts available
+  #       inputs:
+  #         PathtoPublish: $(Build.ArtifactStagingDirectory)/Published/Nop.Web.zip
+  #         ArtifactName: 'nop'
+  #         publishLocation: Container
   - job: dockerbuild
     displayName: docker image build
     pool:
@@ -36,6 +41,9 @@ jobs:
     steps:
       - task: Docker@2
         inputs:
-          command: 'build'
+          containerRegistry: "${{ parameters.containerRegistry }}"
+          repository: samprakashroyyala/imp
+          command: 'buildAndPush'
           Dockerfile: '**/Dockerfile'
-          tags: "qtdevops/nopCommerce"
+          tags: "$(Build.BuildId)"
+
